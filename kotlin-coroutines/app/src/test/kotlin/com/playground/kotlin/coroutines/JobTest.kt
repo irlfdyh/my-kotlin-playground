@@ -50,4 +50,22 @@ class JobTest {
         }
     }
 
+    @Test
+    fun testJobJoinAll() {
+        runBlocking {
+            val job1 = GlobalScope.launch {
+                delay(2_000)
+                println("Coroutine Done : ${Thread.currentThread().name}")
+            }
+
+            val job2 = GlobalScope.launch {
+                delay(2_000)
+                println("Coroutine Done : ${Thread.currentThread().name}")
+            }
+
+            joinAll(job1, job2)
+
+        }
+    }
+
 }
