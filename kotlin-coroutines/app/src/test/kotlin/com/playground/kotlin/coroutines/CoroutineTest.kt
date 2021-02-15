@@ -1,9 +1,6 @@
 package com.playground.kotlin.coroutines
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.concurrent.thread
@@ -52,6 +49,45 @@ class CoroutineTest {
             delay(3_000)
         }
         println("FINISH")
+    }
+
+    @Test
+    fun testParentChild() {
+        runBlocking {
+            val job = GlobalScope.launch {
+                launch {
+                    delay(2000)
+                    println("Child 1 done")
+                }
+                launch {
+                    delay(4000)
+                    println("Child 2 done")
+                }
+                delay(1000)
+                println("Parent done")
+            }
+            job.join()
+        }
+    }
+
+    @Test
+    fun testParentChildCancel() {
+        runBlocking {
+            val job = GlobalScope.launch {
+                launch {
+                    delay(2000)
+                    println("Child 1 done")
+                }
+                launch {
+                    delay(4000)
+                    println("Child 2 done")
+                }
+                delay(1000)
+                println("Parent done")
+            }
+            job.cancelChildren()
+            job.join()
+        }
     }
 
 }
