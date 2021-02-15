@@ -57,14 +57,27 @@ class JobTest {
                 delay(2_000)
                 println("Coroutine Done : ${Thread.currentThread().name}")
             }
-
             val job2 = GlobalScope.launch {
                 delay(2_000)
                 println("Coroutine Done : ${Thread.currentThread().name}")
             }
-
             joinAll(job1, job2)
+        }
+    }
 
+    @Test
+    fun testCancelFinally() {
+        runBlocking {
+            val job: Job = GlobalScope.launch() {
+                try {
+                    println("Coroutine Started : ${Thread.currentThread().name}")
+                    delay(2_000)
+                    println("Coroutine Done : ${Thread.currentThread().name}")
+                } finally {
+                    println("FINISH")
+                }
+            }
+            job.cancelAndJoin()
         }
     }
 
