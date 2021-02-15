@@ -30,4 +30,18 @@ class AsyncTest {
         }
     }
 
+    @Test
+    fun testAwaitAll() {
+        runBlocking {
+            val time = measureTimeMillis {
+                val foo: Deferred<Int> = GlobalScope.async { getFoo() }
+                val bar: Deferred<Int> = GlobalScope.async { getBar() }
+
+                val result = awaitAll(foo, bar).sum()
+                println("Result: $result")
+            }
+            println("Total time: $time")
+        }
+    }
+
 }
