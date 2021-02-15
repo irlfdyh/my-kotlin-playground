@@ -90,4 +90,20 @@ class CoroutineTest {
         }
     }
 
+    @Test
+    fun testAwaitCancellation() {
+        runBlocking {
+            val job = launch {
+                try {
+                    println("Job start")
+                    awaitCancellation()
+                } finally {
+                    println("Cancelled")
+                }
+            }
+            delay(5000)
+            job.cancelAndJoin()
+        }
+    }
+
 }
