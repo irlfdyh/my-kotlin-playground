@@ -35,4 +35,27 @@ class ThreadTest {
         Thread.sleep(3_000)
         println("Finished")
     }
+
+    @Test
+    fun testMultipleThread() {
+        // Using old java Runnable
+        val thread1 = Thread(Runnable {
+            println(Date())
+            Thread.sleep(2_000)
+            println("Finish Thread 1 : ${Thread.currentThread().name} : ${Date()}")
+        })
+
+        val thread2 = Thread(Runnable {
+            println(Date())
+            Thread.sleep(2_000)
+            println("Finish Thread 2 : ${Thread.currentThread().name} : ${Date()}")
+        })
+
+        thread1.start()
+        thread2.start()
+
+        println("Waiting process to finish")
+        Thread.sleep(3_000)
+        println("Finished")
+    }
 }
