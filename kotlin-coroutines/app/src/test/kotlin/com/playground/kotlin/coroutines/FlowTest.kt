@@ -3,6 +3,7 @@ package com.playground.kotlin.coroutines
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class FlowTest {
 
@@ -68,6 +69,73 @@ class FlowTest {
                     .collect()
             }
             job.join()
+        }
+    }
+
+    @Test
+    fun testSharedFlow() {
+        val scope = CoroutineScope(Dispatchers.IO)
+        val sharedFlow = MutableSharedFlow<Int>()
+
+        scope.launch {
+            repeat(10) {
+                println("Send   $it : ${Date()}")
+                sharedFlow.emit(it)
+                delay(1000)
+            }
+        }
+
+        scope.launch {
+            sharedFlow.asSharedFlow()
+                .buffer(10)
+                .map { "Receive Job 1 : $it : ${Date()}" }
+                .collect {
+                    delay(2000)
+                    println(it)
+                }
+        }
+
+        scope.launch {
+            sharedFlow.asSharedFlow()
+                .buffer(10)
+                .map { "Receive Job 2 : $it : ${Date()}" }
+                .collect {
+                    delay(1000)
+                    println(it)
+                }
+        }
+
+        runBlocking {
+            delay(22_000)
+            scope.cancel()
+        }
+    }
+
+    @Test
+    fun testStateFlow() {
+        val scope = CoroutineScope(Dispatchers.IO)
+        val stateFlow = MutableStateFlow(value = 0)
+
+        scope.launch {
+            repeat(10) {
+                println("Send   $it : ${Date()}")
+                stateFlow.emit(it)
+                delay(1000)
+            }
+        }
+
+        scope.launch {
+            stateFlow.asStateFlow()
+                .map { "Receive Job 1 : $it : ${Date()}" }
+                .collect {
+                    println(it)
+                    delay(2000)
+                }
+        }
+
+        runBlocking {
+            delay(22_000)
+            scope.cancel()
         }
     }
 
